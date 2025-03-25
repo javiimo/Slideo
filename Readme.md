@@ -1,98 +1,183 @@
-## layout_manager.py
+# Slideo: AI-Powered Presentation Builder
 
-We use a prompt to get the indices 
+Slideo is an AI-driven tool designed to streamline the creation of engaging slide presentations and convert them into polished videos. Leveraging language models, image search APIs, and multimedia processing libraries, Slideo automates:
+- **Slide Layout Design:** Generate structured slide layouts using AI prompts that respect timing constraints and content balance.
+- **Content Generation:** Produce tailored slide text, bullet points, and comparisons.
+- **Image Integration:** Search for and download relevant images (or thumbnails) via SerpAPI.
+- **Script Writing:** Create a natural, engaging narrator script based on slide content.
+- **Video Creation:** Convert your PowerPoint presentation into a video with audio narration.
+- **User-friendly GUI:** All features are accessible through an intuitive interface that provides complete control over customizing and refining the AI-generated content.
 
-prompt:
-    Presentation context:
+---
 
-    Topic of the presentation: {topic}
+## Features
 
-    Duration: {duration} mins.
+- **AI Layout Management:** Uses prompts to design slide layouts based on the presentation topic, duration, and content type.  
+  - **Available Slide Templates:**  
+    - Title  
+    - Section Title  
+    - Content (bullet points)  
+    - Content (comparison in 2 columns)  
+    - Single image  
+    - Multiple images  
+    - Index  
 
-    For building the layout you have the following types of slides. The indices distinguish each type of slide layout:
+- **Image Search & Handling:**  
+  - Generates relevant search queries for a topic using an LLM.
+  - Downloads thumbnails and full-resolution images via SerpAPI: thumbnails enable efficient selection while full images are used in the final presentation.
 
-    **if include_title:**
-        prompt += f"""Title (index 0): Just for the title of the presentation.\n"""
-    **if include_title_sections:**
-        prompt += f"""Section title (index 2): For the title of each section when they start.\n"""
+- **Presentation Building:**  
+  - Uses [python-pptx](https://python-pptx.readthedocs.io/) for slide creation.
+  - Images are added to their corresponding sildes via fuzzy matching between image descriptions and slide descriptions.
+  - Uses Llama models via GroqAPI.
+  
+- **Narrator Script and Audio Generation:**  
+  - Analyzes slide content (text and images) to generate contextually relevant narration scripts.
+  - Creates natural, engaging narration using AI prompts for presentation flow.
+  - Converts scripts to professional voiceovers using ElevenLabs text-to-speech API.
 
-    Content: 
-        - Ideas in bullet points (index 1).
-        - Comparison in 2 columns (index 4).
+- **Video Production:**  
+  - Converts PowerPoint slides to images (via COM on Windows).
+  - Uses [moviepy](https://zulko.github.io/moviepy/) to merge slides and audio into a video with smooth transitions.
 
-    **if include_image_slides:**
-        prompt += f"""Pictures/plots:
-        - If there is only one image (index 8)
-        - If there are more than one images (index 5)\n"""
+- **GUI Integration:**  
+  - A [Streamlit](https://streamlit.io/) web interface in **GUI.py** allows for easy configuration, API key management, and step-by-step presentation creation.
 
-    Now, taking into account that a title slide takes about 15 seconds, a picture/plot slide takes about 30 seconds and a content slide takes about 45 seconds, build a layout for well structured slide presentation.
+---
 
-    Comments and suggestions:
-    {comments}
+## Directory Structure
 
+```plaintext
+javiimo-slideo/
+├── Readme.md
+├── GUI.py
+├── LICENSE
+├── image_search.py
+├── layout_manager.py
+├── main.py
+├── presenter.py
+├── scripter.py
+├── slides_builder.py
+├── utility_functions.py
+└── video.py
+```
 
-    Return the layout as a JSON object with the following schema:
-    ```json
-    {{"slides": [{{"index": index, "description": "description"}}, ... ]}}
+- **GUI.py:**  
+  Provides a Streamlit-based interface for managing API keys, configuring presentation settings, selecting images, generating layouts, and finally creating slides, scripts, and videos.
+
+- **image_search.py:**  
+  Handles image searching and downloading using SerpAPI.
+
+- **layout_manager.py:**  
+  Constructs slide layouts by generating AI prompts based on presentation context, duration, and slide types.
+
+- **main.py:**  
+  A command-line entry point that orchestrates the entire presentation creation process (from query generation to video creation).
+
+- **presenter.py:**  
+  (Reserved for additional presentation-related functionality.)
+
+- **scripter.py:**  
+  Extracts content from slides and generates narration scripts using AI, ensuring the narration is engaging and aligned with slide content.
+
+- **slides_builder.py:**  
+  Uses python-pptx to create and populate the PowerPoint presentation based on the layout and image mappings.
+
+- **utility_functions.py:**  
+  Contains helper functions for saving layouts, estimating presentation duration, managing file directories, and more.
+
+- **video.py:**  
+  Converts the generated presentation into a video using PowerPoint slide conversion and moviepy for audio–video merging.
+
+---
+
+## Setup & Installation
+
+1. **Clone the repository:**
+
+   ```bash
+   git clone https://github.com/yourusername/javiimo-slideo.git
+   cd javiimo-slideo
+   ```
+
+2. **Install Dependencies:**
+
+   Ensure you have Python 3.7+ installed. Then install the required packages (consider creating a virtual environment):
+
+   ```bash
+   pip install -r requirements.txt
+   ```
+
+   If you're using Conda:
+
+    ```bash
+    conda env create -f requirements.yml
+    conda activate <your_env_name>
     ```
-    """
 
+3. **API Keys Configuration:**
 
-sysprompt = "You are an expert in creating structured slide presentations. Based on the provided context, design a complete slide layout that fits within the specified duration and uses the slide types available. Each slide must include a very concise description of its content or purpose. Ensure the presentation flows logically, with the right balance of contents while adhering to the timing constraints provided. Return the layout as a list of slide objects with the index and description. Notice that ALL the slides have a title referring to the section, subsection or content of the slide itself so the description has to make clear what the title of each slide could be. Also indices mean a certain template, NOT a position of the slide."
+   - API keys can be added through the GUI interface. The keys are stored in an encrypted configuration file (`config/apikeys.enc`). Note that while the keys are encrypted, the encryption key itself is currently hardcoded in `GUI.py` (line 26). For better security, you should modify this encryption key before use.
 
+4. **Platform Requirements:**
 
-Indices:
-"""
-0 : Title
-2 : Section Title
-1 : Content in bullet points
-4 : Content comparison in 2 columns
-8 : Only one image
-5 : More than one image
-11 : Index
-"""
+   - The PowerPoint conversion via COM in **video.py** only works on Windows.
+   - Ensure you have Microsoft Office installed for slide conversion.
 
+---
 
-duration_estimation_dict = {
-        0: 15, #title
-        11: 30, #index
-        1: 45, #content
-        2: 15, #section title
-        4: 45, #content
-        5: 30, #images
-        8: 30  #images
-    }
+## Usage
 
+### Graphical User Interface (GUI)
 
+Run the Streamlit application to use the interactive interface:
 
+```bash
+streamlit run GUI.py
+```
 
+The GUI allows you to:
+- Set the presentation topic and additional comments.
+- Generate image search queries and select thumbnails.
+- Build a slide layout and edit slide descriptions.
+- Generate the PowerPoint presentation.
+- Create narration scripts and convert the presentation into a video.
 
-## slides_builder.py
+### Command-Line Mode
 
-Build the presentation
+To run the entire presentation creation process via the command line, execute:
 
-Add content to each slide (according to its type) by giving the context of the description to the LLM.
+```bash
+python main.py
+```
 
-There is an example of the descriptions and indices in the if name==main
+This script will guide you through:
+- Entering presentation details.
+- Generating and selecting images.
+- Building the slide layout.
+- Creating the PowerPoint file.
+- Generating the narration script.
+- Producing the final video output.
 
+Notice there are some limitations within the command line implementation, such as modifying the outputs of the LLMs or choosing images. It was written only for the purpose of testing the complete pipeline.
 
-## scripter.py
+---
 
-Takes all the text from a slide and the first image (because groq API only supports 1 image per call) and generates a script. It accepts additional comments that we might give to the LLM like having a certain tone or being more concise or using certain expressions or whatever.
+## License
 
-The prompt is as follows:
+This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
 
-sysprompt = "You are an expert narrator script writer. You will receive information extracted from slides, including text and one image (if there is one in the slide). Your task is to create a compelling and informative script for a narrator that explains the slide's content without directly reading the text. Instead, focus on providing context, insights, and connections between the different elements on the slide. If images are present, refer to them generally in your script (e.g., 'as you can see in the accompanying chart...' or 'the image illustrates...'), if there are none, do not say anything about them. Your script should sound natural, engaging, and suitable for a presentation. DO NOT HALLUCINATE INFORMATION, STICK TO THE INFO IN THE SLIDE."
+---
 
+## Acknowledgements
 
-if extracted_data["text"]:
-            prompt += "Text contained in the slide:\n" + "\n".join(extracted_data["text"]) + "\n"
-        if comments:
-            prompt += "Comments and suggestions about the script:\n" + comments + "\n" #Adding the comments to the prompt
+- Developed by **Javier Montané Ortuño** during an internship at FOREO (October 2024 - March 2025) under the guidance of Frank Ravanelli and Sofiya Nasiakaila.
+- Uses advanced language models and image APIs to simplify the creation of multimedia presentations.
+- Thanks to the maintainers of [python-pptx](https://python-pptx.readthedocs.io/), [Streamlit](https://streamlit.io/), and [moviepy](https://zulko.github.io/moviepy/) for their fantastic libraries.
 
+---
 
-prompt += """Provide the narrator script directly without any introductory or concluding remarks (e.g., 'Here's the script...') or other additions like stage directions (e.g., '(a brief pause)').  Do not include anything else, just the script.
-        
-        Adjust the time of narration to the type of slide you are presenting. For slides that only show a section title, keep it brief and seamless, simply introducing the section. For content slides, provide more detailed explanations and insights, paraphrasing the information contained in the slide to enhance clarity. Ensure everything you say is grounded in the slide's content.
-        """
+Feel free to contribute, open issues, or suggest enhancements.
+
+**Happy Presenting!**
 

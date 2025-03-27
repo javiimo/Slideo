@@ -1,3 +1,9 @@
+<p align="center">
+  <img src="readme_assets/Slideo_logo.png" width="400">
+</p>
+
+
+
 # Slideo: AI-Powered Presentation Builder
 
 Slideo is an AI-driven tool designed to streamline the creation of engaging slide presentations and convert them into polished videos. Leveraging language models, image search APIs, and multimedia processing libraries, Slideo automates:
@@ -7,6 +13,44 @@ Slideo is an AI-driven tool designed to streamline the creation of engaging slid
 - **Script Writing:** Create a natural, engaging narrator script based on slide content.
 - **Video Creation:** Convert your PowerPoint presentation into a video with audio narration.
 - **User-friendly GUI:** All features are accessible through an intuitive interface that provides complete control over customizing and refining the AI-generated content.
+
+## GUI images:
+
+<p align="center">
+  <img src="readme_assets/Main view.png" alt="Main View" height="300">
+  <br>
+  <em>Main interface and options</em>
+</p>
+
+<p align="center">
+  <img src="readme_assets/Slide Layout.png" alt="Slide Layout" height="300">
+  <br>
+  <em>AI-generated slide layout preview and customization</em>
+</p>
+
+<p align="center">
+  <img src="readme_assets/Image selection.png" alt="Image Selection" height="300">
+  <br>
+  <em>Image selection interface with thumbnail previews</em>
+</p>
+
+<p align="center">
+  <img src="readme_assets/Suggested image queries.png" alt="Suggested Image Queries" height="300">
+  <br>
+  <em>AI-suggested image search queries for your content</em>
+</p>
+
+<p align="center">
+  <img src="readme_assets/Scripting.png" alt="Scripting" height="300">
+  <br>
+  <em>Script generation and editing interface</em>
+</p>
+
+<p align="center">
+  <img src="readme_assets/Video Creation Loading.png" alt="Video Creation" height="300">
+  <br>
+  <em>Video creation progress tracking</em>
+</p>
 
 ---
 

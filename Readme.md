@@ -22,11 +22,16 @@ Slideo is an AI-driven tool designed to streamline the creation of engaging slid
   <em>Main interface and options</em>
 </p>
 
+---
+
 <p align="center">
   <img src="readme_assets/Slide Layout.png" alt="Slide Layout" height="300">
   <br>
   <em>AI-generated slide layout preview and customization</em>
 </p>
+
+---
+
 
 <p align="center">
   <img src="readme_assets/Image selection.png" alt="Image Selection" height="300">
@@ -34,17 +39,26 @@ Slideo is an AI-driven tool designed to streamline the creation of engaging slid
   <em>Image selection interface with thumbnail previews</em>
 </p>
 
+---
+
+
 <p align="center">
   <img src="readme_assets/Suggested image queries.png" alt="Suggested Image Queries" height="300">
   <br>
   <em>AI-suggested image search queries for your content</em>
 </p>
 
+---
+
+
 <p align="center">
   <img src="readme_assets/Scripting.png" alt="Scripting" height="300">
   <br>
   <em>Script generation and editing interface</em>
 </p>
+
+---
+
 
 <p align="center">
   <img src="readme_assets/Video Creation Loading.png" alt="Video Creation" height="300">
